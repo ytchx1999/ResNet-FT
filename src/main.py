@@ -54,7 +54,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(resnet_18.parameters(), lr=args.lr, momentum=0.9)
 
-    for epoch in range(args.epoch):
+    for epoch in range(args.epochs):
         train_loss, train_acc = train(train_loader, device, resnet_18, criterion, optimizer)
         val_loss, val_acc = val(val_loader, device, resnet_18, criterion)
         print(
