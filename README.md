@@ -2,6 +2,14 @@
 
 A finetune examle by chx.
 
+## Experiment Setnp
+```bash
+cd src/
+python main.py
+```
+
+## Tree
+
 ```bash
 .
 ├── README.md
