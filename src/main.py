@@ -19,8 +19,10 @@ def main():
     parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--norm_mean', type=float, default=0.5)
     parser.add_argument('--norm_std', type=float, default=0.2)
-    parser.add_argument('--basic_data_dir', type=str, default='../data/hymenoptera_data')
-    parser.add_argument('--model_dir', type=str, default='./models/resnet18-5c106cde.pth')
+    parser.add_argument('--basic_data_dir', type=str,
+                        default='../data/hymenoptera_data')
+    parser.add_argument('--model_dir', type=str,
+                        default='./models/resnet18-5c106cde.pth')
     # parser.add_argument('--hidden_channels', type=int, default=512)
     # parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument('--lr', type=float, default=0.001)
@@ -42,7 +44,8 @@ def main():
     train_dataset = AntDataset(train_dir, transform=transform)
     val_dataset = AntDataset(val_dir, transform=transform)
 
-    train_loader = DataLoader(dataset=train_dataset, batch_size=args.batch_size, shuffle=True)
+    train_loader = DataLoader(dataset=train_dataset,
+                              batch_size=args.batch_size, shuffle=True)
     val_loader = DataLoader(dataset=val_dataset, batch_size=args.batch_size)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -70,6 +73,7 @@ def train(train_loader, device, model, criterion, optimizer):
     model.train()
     tot_loss = 0
     tot_correct = 0
+    tot_train = 0
     for i, data in enumerate(train_loader):
         img, label = data
         img, label = img.to(device), label.to(device)
@@ -85,8 +89,9 @@ def train(train_loader, device, model, criterion, optimizer):
         y_pred = out.argmax(dim=1)
         correct = (y_pred == label).sum().item()
         tot_correct += correct
+        tot_train += label.size(0)
 
-    return tot_loss / len(train_loader), tot_correct / len(train_loader)
+    return tot_loss / tot_train, tot_correct / tot_train
 
 
 @torch.no_grad()
@@ -94,6 +99,7 @@ def val(val_loader, device, model, criterion):
     model.eval()
     tot_loss = 0
     tot_correct = 0
+    tot_val = 0
     for i, data in enumerate(val_loader):
         img, label = data
         img, label = img.to(device), label.to(device)
@@ -105,8 +111,9 @@ def val(val_loader, device, model, criterion):
         y_pred = out.argmax(dim=1)
         correct = (y_pred == label).sum().item()
         tot_correct += correct
+        tot_val += label.size(0)
 
-    return tot_loss / len(val_loader), tot_correct / len(val_loader)
+    return tot_loss / tot_val, tot_correct / tot_val
 
 
 if __name__ == '__main__':
